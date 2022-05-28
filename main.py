@@ -4,11 +4,12 @@ import torch.multiprocessing as mp
 import torch.nn as nn
 import torch.optim as optim
 from torch.nn.parallel import DistributedDataParallel as DDP
+import os
 
-def example(rank,world_size:
+def example(rank,world_size):
+    print('started training')
     # create default process group
-    dist.init_process_group('gloo',rank=rank,world_size=world_size)
-
+    dist.init_process_group('gloo', rank=rank, world_size=world_size)
     # create a local model
     model = nn.Linear(10,10).to(rank)
 
@@ -29,10 +30,13 @@ def example(rank,world_size:
 
     # update parameters
     optimizer.step()
+    
+    print('finished dummy model')
 
 
 def main():
     world_size = 2
+    print('spawning processes')
     mp.spawn(example,
             args=(world_size,),
             nprocs=world_size,
